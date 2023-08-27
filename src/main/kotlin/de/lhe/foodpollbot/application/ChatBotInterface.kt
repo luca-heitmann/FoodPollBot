@@ -1,0 +1,97 @@
+package de.lhe.foodpollbot.application
+
+import com.github.kotlintelegrambot.bot
+import com.github.kotlintelegrambot.dispatch
+import com.github.kotlintelegrambot.dispatcher.callbackQuery
+import com.github.kotlintelegrambot.dispatcher.command
+import com.github.kotlintelegrambot.entities.ChatId
+import com.github.kotlintelegrambot.entities.InlineKeyboardMarkup
+import com.github.kotlintelegrambot.entities.keyboard.InlineKeyboardButton
+import com.github.kotlintelegrambot.logging.LogLevel
+
+const val FOOD_POLL_COMMAND = "foodpoll"
+const val GET_IN_COMMAND = "getin"
+const val GET_OUT_COMMAND = "getout"
+
+val chatBot = TelegramChatBotInterface
+
+interface ChatBotInterface {
+    fun sendMessage(chatId: Long, text: String, includeButtons: Boolean = false): Long?
+
+    fun editMessage(chatId: Long, messageId: Long, text: String, includeButtons: Boolean = false)
+
+    fun deleteMessage(chatId: Long, messageId: Long)
+}
+
+object TelegramChatBotInterface : ChatBotInterface {
+    val bot = bot {
+        token = System.getenv("BOT_TOKEN")!!
+        logLevel = LogLevel.All()
+        dispatch {
+            command(FOOD_POLL_COMMAND) {
+                handleFoodPollCommand(
+                    chatId = message.chat.id,
+                    userId = message.from!!.id,
+                    userName = message.from!!.firstName,
+                    args = args
+                )
+            }
+            callbackQuery(GET_IN_COMMAND) {
+                handleGetInCallback(
+                    chatId = callbackQuery.message!!.chat.id,
+                    messageId = callbackQuery.message!!.messageId,
+                    userId = callbackQuery.from.id,
+                    userName = callbackQuery.from.firstName
+                )
+            }
+            callbackQuery(GET_OUT_COMMAND) {
+                handleGetOutCallback(
+                    chatId = callbackQuery.message!!.chat.id,
+                    messageId = callbackQuery.message!!.messageId,
+                    userId = callbackQuery.from.id
+                )
+            }
+        }
+    }
+
+    fun initBot() {
+        bot.startPolling()
+    }
+
+    override fun sendMessage(chatId: Long, text: String, includeButtons: Boolean): Long? {
+        val result = bot.sendMessage(
+            chatId = ChatId.fromId(chatId),
+            text = text,
+            replyMarkup = if (includeButtons) createGetInOutButtons() else null
+        )
+
+        return result.getOrNull()?.messageId
+    }
+
+    override fun editMessage(chatId: Long, messageId: Long, text: String, includeButtons: Boolean) {
+        bot.editMessageText(
+            chatId = ChatId.fromId(chatId),
+            messageId = messageId,
+            text = text,
+            replyMarkup = if (includeButtons) createGetInOutButtons() else null
+        )
+    }
+
+    override fun deleteMessage(chatId: Long, messageId: Long) {
+        bot.deleteMessage(
+            chatId = ChatId.fromId(chatId),
+            messageId = messageId
+        )
+    }
+
+    private fun createGetInOutButtons() = InlineKeyboardMarkup.createSingleRowKeyboard(
+        InlineKeyboardButton.CallbackData(
+            text = "Einsteigen",
+            callbackData = GET_IN_COMMAND
+        ),
+        InlineKeyboardButton.CallbackData(
+            text = "Aussteigen",
+            callbackData = GET_OUT_COMMAND
+        )
+    )
+}

@@ -1,11 +1,11 @@
+package de.lhe.foodpollbot.application
+
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 import java.time.LocalDateTime
-import java.time.format.DateTimeParseException
-import kotlin.test.fail
 
-class MainTest {
+class FoodPollServiceTest {
 
     @Test
     fun parseTime() {
@@ -39,11 +39,6 @@ class MainTest {
     }
 
     private fun verifyUnableToParseTime(time: String) {
-        try {
-            parseTime(time)
-        } catch (e: DateTimeParseException) {
-            return
-        }
-        fail("Expected parsing error")
+        assertNull(parseTime(time))
     }
 }

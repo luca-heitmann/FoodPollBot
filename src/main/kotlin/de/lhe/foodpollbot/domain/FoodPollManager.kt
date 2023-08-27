@@ -1,3 +1,5 @@
+package de.lhe.foodpollbot.domain
+
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -8,7 +10,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.time.LocalDateTime
 
-const val FOOD_POLLS_FILE = "foodpolls.json"
+val FOOD_POLLS_FILE = System.getenv("FOOD_POLLS_FILE") ?: "foodpolls.json"
 
 @Serializable
 data class FoodPoll(
