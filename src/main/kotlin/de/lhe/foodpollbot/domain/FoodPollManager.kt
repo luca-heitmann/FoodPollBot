@@ -20,13 +20,14 @@ data class FoodPoll(
     @Serializable(with = LocalDateTimeSerializer::class)
     val time: LocalDateTime,
     val name: String?,
-    val members: ArrayList<FoodPollMember>
+    val translationNumber: Int,
+    val members: ArrayList<FoodPollMember>,
 )
 
 @Serializable
 data class FoodPollMember(
     val userId: Long,
-    val name: String
+    val name: String,
 )
 
 private var currentFoodPolls = ArrayList<FoodPoll>()

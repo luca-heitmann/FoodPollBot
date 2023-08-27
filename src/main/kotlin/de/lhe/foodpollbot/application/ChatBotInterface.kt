@@ -22,7 +22,26 @@ interface ChatBotInterface {
         messageKey: String,
         vararg messageArgs: String,
         includeButtons: Boolean = false,
-    ) = sendMessage(chatId, foodPollType, getTranslatedMessage(foodPollType, messageKey, *messageArgs), includeButtons)
+    ) = sendMessage(
+        chatId,
+        foodPollType,
+        getTranslatedMessage(foodPollType, messageKey, null, *messageArgs),
+        includeButtons
+    )
+
+    fun sendTranslatedMessage(
+        chatId: Long,
+        foodPollType: String,
+        messageKey: String,
+        messageVariant: Int? = null,
+        vararg messageArgs: String,
+        includeButtons: Boolean = false,
+    ) = sendMessage(
+        chatId,
+        foodPollType,
+        getTranslatedMessage(foodPollType, messageKey, messageVariant, *messageArgs),
+        includeButtons
+    )
 
     fun sendMessage(
         chatId: Long,
@@ -38,7 +57,29 @@ interface ChatBotInterface {
         messageKey: String,
         vararg messageArgs: String,
         includeButtons: Boolean = false,
-    ) = editMessage(chatId, messageId, foodPollType, getTranslatedMessage(foodPollType, messageKey, *messageArgs), includeButtons)
+    ) = editMessage(
+        chatId,
+        messageId,
+        foodPollType,
+        getTranslatedMessage(foodPollType, messageKey, null, *messageArgs),
+        includeButtons
+    )
+
+    fun editTranslatedMessage(
+        chatId: Long,
+        messageId: Long,
+        foodPollType: String,
+        messageKey: String,
+        messageVariant: Int? = null,
+        vararg messageArgs: String,
+        includeButtons: Boolean = false,
+    ) = editMessage(
+        chatId,
+        messageId,
+        foodPollType,
+        getTranslatedMessage(foodPollType, messageKey, messageVariant, *messageArgs),
+        includeButtons
+    )
 
     fun editMessage(
         chatId: Long,
@@ -57,7 +98,7 @@ interface ChatBotInterface {
 object TelegramChatBotInterface : ChatBotInterface {
     val bot = bot {
         token = System.getenv("BOT_TOKEN")!!
-        logLevel = LogLevel.All()
+        logLevel = LogLevel.Error
         dispatch {
             getFoodPollTypes().forEach { foodPollType ->
                 command(foodPollType) {

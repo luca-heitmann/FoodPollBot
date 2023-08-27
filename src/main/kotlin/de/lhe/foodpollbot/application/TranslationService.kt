@@ -31,11 +31,11 @@ fun getFoodPollTypes(): List<String> {
         .toList()
 }
 
-fun getTranslatedMessage(foodPollType: String, messageKey: String, vararg messageArgs: String): String {
+fun getTranslatedMessage(foodPollType: String, messageKey: String, messageVariant: Int? = null, vararg messageArgs: String): String {
     val possibleTranslations = getTranslationForType(foodPollType)[messageKey]
     var translation = if (possibleTranslations is List<*>) {
-        val randomTranslationNumber = Random.nextInt(0, possibleTranslations.size)
-        possibleTranslations[randomTranslationNumber].toString()
+        val variant = messageVariant ?: Random.nextInt(0, possibleTranslations.size)
+        possibleTranslations[variant].toString()
     } else {
         possibleTranslations.toString()
     }
@@ -43,6 +43,11 @@ fun getTranslatedMessage(foodPollType: String, messageKey: String, vararg messag
         translation = translation.replaceFirst("{}", it)
     }
     return translation
+}
+
+fun getNumOfPossibleTranslations(foodPollType: String, messageKey: String): Int {
+    val possibleTranslations = getTranslationForType(foodPollType)[messageKey]
+    return if (possibleTranslations is List<*>) possibleTranslations.size else 1
 }
 
 private fun getTranslationForType(foodPollType: String): FoodPollTranslations =

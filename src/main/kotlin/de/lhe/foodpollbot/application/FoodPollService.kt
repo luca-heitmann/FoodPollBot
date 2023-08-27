@@ -8,6 +8,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.*
+import kotlin.random.Random
 
 val timer = Timer()
 val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -28,10 +29,13 @@ fun handleFoodPollCommand(chatId: Long, userId: Long, userName: String, foodPoll
     } else if (findFoodPoll(time) != null) {
         chatBot.sendTranslatedMessage(chatId, foodPollType, TIME_EXISTS_ERROR_KEY)
     } else {
+        val translationNumber = Random.nextInt(0, getNumOfPossibleTranslations(foodPollType, FOOD_POLL_KEY))
+
         val messageId = chatBot.sendTranslatedMessage(
             chatId = chatId,
             foodPollType = foodPollType,
             messageKey = FOOD_POLL_KEY,
+            messageVariant = translationNumber,
             messageArgs = arrayOf(
                 if (name == null) "" else "\"$name\" ",
                 time.format(timeFormatter),
@@ -46,7 +50,8 @@ fun handleFoodPollCommand(chatId: Long, userId: Long, userName: String, foodPoll
             type = foodPollType,
             time = time,
             name = name,
-            members = arrayListOf(FoodPollMember(userId, userName))
+            translationNumber = translationNumber,
+            members = arrayListOf(FoodPollMember(userId, userName)),
         )
 
         createFoodPoll(foodPoll)
@@ -135,6 +140,7 @@ fun updateFoodPollMessage(foodPoll: FoodPoll) {
         messageId = foodPoll.messageId,
         foodPollType = foodPoll.type,
         messageKey = FOOD_POLL_KEY,
+        messageVariant = foodPoll.translationNumber,
         messageArgs = arrayOf(
             if (foodPoll.name == null) "" else "\"${foodPoll.name}\" ",
             foodPoll.time.format(timeFormatter),
