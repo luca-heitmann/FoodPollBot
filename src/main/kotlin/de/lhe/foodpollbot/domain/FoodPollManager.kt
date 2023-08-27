@@ -16,6 +16,7 @@ val FOOD_POLLS_FILE = System.getenv("FOOD_POLLS_FILE") ?: "foodpolls.json"
 data class FoodPoll(
     val chatId: Long,
     val messageId: Long,
+    val type: String,
     @Serializable(with = LocalDateTimeSerializer::class)
     val time: LocalDateTime,
     val name: String?,
@@ -67,7 +68,10 @@ fun loadFoodPolls() {
     try {
         if (Files.exists(Paths.get(FOOD_POLLS_FILE))) {
             val json = Files.readString(Paths.get(FOOD_POLLS_FILE))
-            currentFoodPolls = Json.decodeFromString<ArrayList<FoodPoll>>(json)
+            val foodPolls = Json.decodeFromString<List<FoodPoll>>(json)
+            foodPolls
+                .filter { LocalDateTime.now().isBefore(it.time) }
+                .forEach(::createFoodPoll)
         }
     } catch (e: IOException) {
         e.printStackTrace()

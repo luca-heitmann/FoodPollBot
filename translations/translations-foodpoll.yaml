@@ -1,0 +1,13 @@
+help: |
+  Falsche Benutzung!
+  /foodpoll <Zeit> [<Name>]
+  /foodpoll 12:00 Lecker Schnitzel
+  /foodpoll 13
+getIn: Einsteigen
+getOut: Aussteigen
+foodPoll: "FoodPoll {}um {} Uhr mit {}"
+foodPollStart: "FoodPoll startet mit {}"
+foodPollCanceled: "FoodPoll {}um {} Uhr abgebrochen, weil alle ausgestiegen sind"
+timeFormatError: "Zeit nicht erkannt: {}"
+timeInPastError: "Ein FoodPoll kann nicht in der Vergangenheit erstellt werden"
+timeExistsError: "Es existiert bereits ein FoodPoll für diese Zeit"

@@ -12,17 +12,9 @@ import java.util.*
 val timer = Timer()
 val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-fun handleFoodPollCommand(chatId: Long, userId: Long, userName: String, args: List<String>) {
+fun handleFoodPollCommand(chatId: Long, userId: Long, userName: String, foodPollType: String, args: List<String>) {
     if (args.isEmpty()) {
-        chatBot.sendMessage(
-            chatId = chatId,
-            text = """
-                Falsche Benutzung!
-                /foodpoll <Zeit> [<Name>]
-                /foodpoll 12:00 Lecker Schnitzel
-                /foodpoll 13
-            """.trimIndent()
-        )
+        chatBot.sendTranslatedMessage(chatId, foodPollType, HELP_KEY)
         return
     }
 
@@ -30,17 +22,28 @@ fun handleFoodPollCommand(chatId: Long, userId: Long, userName: String, args: Li
     val name = if (args.size > 1) args.slice(1..<args.size).joinToString(" ") else null
 
     if (time == null) {
-        chatBot.sendMessage(chatId, "Zeit nicht erkannt: ${args[0]}")
-    } else if (findFoodPoll(time) != null) {
-        chatBot.sendMessage(chatId, "Es existiert bereits ein FoodPoll für diese Zeit")
+        chatBot.sendTranslatedMessage(chatId, foodPollType, TIME_FORMAT_ERROR_KEY, args[0])
     } else if (LocalDateTime.now().isAfter(time)) {
-        chatBot.sendMessage(chatId, "Ein FoodPoll kann nicht in der Vergangenheit erstellt werden")
+        chatBot.sendTranslatedMessage(chatId, foodPollType, TIME_IN_PAST_ERROR_KEY)
+    } else if (findFoodPoll(time) != null) {
+        chatBot.sendTranslatedMessage(chatId, foodPollType, TIME_EXISTS_ERROR_KEY)
     } else {
-        val messageId = chatBot.sendMessage(chatId, formatMessageText(name, time, listOf(userName)), true) ?: return
+        val messageId = chatBot.sendTranslatedMessage(
+            chatId = chatId,
+            foodPollType = foodPollType,
+            messageKey = FOOD_POLL_KEY,
+            messageArgs = arrayOf(
+                if (name == null) "" else "\"$name\" ",
+                time.format(timeFormatter),
+                userName
+            ),
+            includeButtons = true,
+        ) ?: return
 
         val foodPoll = FoodPoll(
             chatId = chatId,
             messageId = messageId,
+            type = foodPollType,
             time = time,
             name = name,
             members = arrayListOf(FoodPollMember(userId, userName))
@@ -72,12 +75,6 @@ fun parseTime(timeStr: String): LocalDateTime? {
     }
 }
 
-fun formatMessageText(foodPoll: FoodPoll) =
-    formatMessageText(foodPoll.name, foodPoll.time, foodPoll.members.map { it.name })
-
-fun formatMessageText(name: String?, time: LocalDateTime, members: List<String>) =
-    "FoodPoll ${if (name != null) "$name " else ""}um ${time.format(timeFormatter)} Uhr mit ${members.joinToString(", ")}"
-
 fun scheduleStartFoodPoll(foodPoll: FoodPoll) {
     if (LocalDateTime.now().isBefore(foodPoll.time)) {
         val startDate = Date.from(foodPoll.time.atZone(ZoneId.systemDefault()).toInstant())
@@ -92,7 +89,8 @@ fun startFoodPoll(foodPoll: FoodPoll) {
     // check if poll is still existing because polls are deleted when all members leave
     if (getFoodPolls().contains(foodPoll)) {
         chatBot.deleteMessage(foodPoll.chatId, foodPoll.messageId)
-        chatBot.sendMessage(foodPoll.chatId, "FoodPoll hebt ab mit ${foodPoll.members.joinToString(", ") { it.name }}")
+        val members = foodPoll.members.joinToString(", ") { it.name }
+        chatBot.sendTranslatedMessage(foodPoll.chatId, foodPoll.type, FOOD_POLL_START_KEY, members)
 
         removeFoodPoll(foodPoll)
     }
@@ -104,7 +102,7 @@ fun handleGetInCallback(chatId: Long, messageId: Long, userId: Long, userName: S
     if (foodPoll.members.find { it.userId == userId } == null) {
         foodPoll.members.add(FoodPollMember(userId, userName))
 
-        chatBot.editMessage(foodPoll.chatId, foodPoll.messageId, formatMessageText(foodPoll), true)
+        updateFoodPollMessage(foodPoll)
     }
 }
 
@@ -116,8 +114,32 @@ fun handleGetOutCallback(chatId: Long, messageId: Long, userId: Long) {
     if (foodPoll.members.isEmpty()) {
         removeFoodPoll(foodPoll)
 
-        chatBot.editMessage(foodPoll.chatId, foodPoll.messageId, "FoodPoll ${if (foodPoll.name != null) "${foodPoll.name} " else ""}um ${foodPoll.time.format(timeFormatter)} Uhr abgebrochen, weil alle ausgestiegen sind")
+        chatBot.editTranslatedMessage(
+            chatId = foodPoll.chatId,
+            messageId = foodPoll.messageId,
+            foodPollType = foodPoll.type,
+            messageKey = FOOD_POLL_CANCELED_KEY,
+            messageArgs = arrayOf(
+                if (foodPoll.name == null) "" else "\"${foodPoll.name}\" ",
+                foodPoll.time.format(timeFormatter)
+            )
+        )
     } else {
-        chatBot.editMessage(foodPoll.chatId, foodPoll.messageId, formatMessageText(foodPoll), true)
+        updateFoodPollMessage(foodPoll)
     }
+}
+
+fun updateFoodPollMessage(foodPoll: FoodPoll) {
+    chatBot.editTranslatedMessage(
+        chatId = foodPoll.chatId,
+        messageId = foodPoll.messageId,
+        foodPollType = foodPoll.type,
+        messageKey = FOOD_POLL_KEY,
+        messageArgs = arrayOf(
+            if (foodPoll.name == null) "" else "\"${foodPoll.name}\" ",
+            foodPoll.time.format(timeFormatter),
+            foodPoll.members.joinToString(", ") { it.name }
+        ),
+        includeButtons = true
+    )
 }

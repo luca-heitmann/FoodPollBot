@@ -15,6 +15,7 @@ repositories {
 dependencies {
     implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("net.mamoe.yamlkt:yamlkt:0.13.0")
     testImplementation(kotlin("test"))
 }
 
