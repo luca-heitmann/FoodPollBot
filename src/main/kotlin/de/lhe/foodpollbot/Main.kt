@@ -7,7 +7,7 @@ import de.lhe.foodpollbot.domain.getFoodPolls
 import de.lhe.foodpollbot.domain.loadFoodPolls
 
 fun main() {
-    println(getFoodPollTypes())
+    println("Found the following FoodPoll types: " + getFoodPollTypes())
     loadFoodPolls()
     getFoodPolls().forEach { scheduleStartFoodPoll(it) }
     chatBot.initBot()

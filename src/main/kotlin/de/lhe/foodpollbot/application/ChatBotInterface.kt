@@ -64,7 +64,7 @@ object TelegramChatBotInterface : ChatBotInterface {
                     handleFoodPollCommand(
                         chatId = message.chat.id,
                         userId = message.from!!.id,
-                        userName = message.from!!.firstName,
+                        userName = message.from!!.firstName.split(" ")[0],
                         foodPollType = foodPollType,
                         args = args
                     )
@@ -75,7 +75,7 @@ object TelegramChatBotInterface : ChatBotInterface {
                     chatId = callbackQuery.message!!.chat.id,
                     messageId = callbackQuery.message!!.messageId,
                     userId = callbackQuery.from.id,
-                    userName = callbackQuery.from.firstName
+                    userName = callbackQuery.from.firstName.split(" ")[0]
                 )
             }
             callbackQuery(GET_OUT_COMMAND) {
@@ -88,9 +88,7 @@ object TelegramChatBotInterface : ChatBotInterface {
         }
     }
 
-    fun initBot() {
-        bot.startPolling()
-    }
+    fun initBot() = bot.startPolling()
 
     override fun sendMessage(chatId: Long, foodPollType: String, text: String, includeButtons: Boolean): Long? {
         val result = bot.sendMessage(
