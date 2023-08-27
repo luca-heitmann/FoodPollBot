@@ -32,7 +32,7 @@ fun handleFoodPollCommand(chatId: Long, userId: Long, userName: String, args: Li
     if (time == null) {
         chatBot.sendMessage(chatId, "Zeit nicht erkannt: ${args[0]}")
     } else if (findFoodPoll(time) != null) {
-        chatBot.sendMessage(chatId, "Es existiert bereits ein FoodPoll um diese Zeit")
+        chatBot.sendMessage(chatId, "Es existiert bereits ein FoodPoll für diese Zeit")
     } else if (LocalDateTime.now().isAfter(time)) {
         chatBot.sendMessage(chatId, "Ein FoodPoll kann nicht in der Vergangenheit erstellt werden")
     } else {
@@ -46,7 +46,8 @@ fun handleFoodPollCommand(chatId: Long, userId: Long, userName: String, args: Li
             members = arrayListOf(FoodPollMember(userId, userName))
         )
 
-        createAndScheduleFoodPoll(foodPoll)
+        createFoodPoll(foodPoll)
+        scheduleStartFoodPoll(foodPoll)
     }
 }
 
@@ -77,11 +78,6 @@ fun formatMessageText(foodPoll: FoodPoll) =
 fun formatMessageText(name: String?, time: LocalDateTime, members: List<String>) =
     "FoodPoll ${if (name != null) "$name " else ""}um ${time.format(timeFormatter)} Uhr mit ${members.joinToString(", ")}"
 
-fun createAndScheduleFoodPoll(foodPoll: FoodPoll) {
-    createFoodPoll(foodPoll)
-    scheduleStartFoodPoll(foodPoll)
-}
-
 fun scheduleStartFoodPoll(foodPoll: FoodPoll) {
     if (LocalDateTime.now().isBefore(foodPoll.time)) {
         val startDate = Date.from(foodPoll.time.atZone(ZoneId.systemDefault()).toInstant())
@@ -96,7 +92,6 @@ fun startFoodPoll(foodPoll: FoodPoll) {
     // check if poll is still existing because polls are deleted when all members leave
     if (getFoodPolls().contains(foodPoll)) {
         chatBot.deleteMessage(foodPoll.chatId, foodPoll.messageId)
-
         chatBot.sendMessage(foodPoll.chatId, "FoodPoll hebt ab mit ${foodPoll.members.joinToString(", ") { it.name }}")
 
         removeFoodPoll(foodPoll)
