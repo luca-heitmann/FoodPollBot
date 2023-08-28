@@ -30,17 +30,17 @@ fun handleFoodPollCommand(chatId: Long, userId: Long, userName: String, foodPoll
         chatBot.sendTranslatedMessage(chatId, foodPollType, TIME_EXISTS_ERROR_KEY)
     } else {
         val translationNumber = Random.nextInt(0, getNumOfPossibleTranslations(foodPollType, FOOD_POLL_KEY))
+        val translationArgs = if (name == null)
+            arrayOf(time.format(timeFormatter), userName)
+        else
+            arrayOf(name, time.format(timeFormatter), userName)
 
         val messageId = chatBot.sendTranslatedMessage(
             chatId = chatId,
             foodPollType = foodPollType,
-            messageKey = FOOD_POLL_KEY,
+            messageKey = if (name == null) FOOD_POLL_KEY else NAMED_FOOD_POLL_KEY,
             messageVariant = translationNumber,
-            messageArgs = arrayOf(
-                if (name == null) "" else "\"$name\" ",
-                time.format(timeFormatter),
-                userName
-            ),
+            messageArgs = translationArgs,
             includeButtons = true,
         ) ?: return
 
@@ -95,7 +95,9 @@ fun startFoodPoll(foodPoll: FoodPoll) {
     if (getFoodPolls().contains(foodPoll)) {
         chatBot.deleteMessage(foodPoll.chatId, foodPoll.messageId)
         val members = foodPoll.members.joinToString(", ") { it.name }
-        chatBot.sendTranslatedMessage(foodPoll.chatId, foodPoll.type, FOOD_POLL_START_KEY, members)
+        val translationArgs = if (foodPoll.name == null) arrayOf(members) else arrayOf(foodPoll.name, members)
+        val messageKey = if (foodPoll.name == null) FOOD_POLL_START_KEY else NAMED_FOOD_POLL_START_KEY
+        chatBot.sendTranslatedMessage(foodPoll.chatId, foodPoll.type, messageKey, *translationArgs)
 
         removeFoodPoll(foodPoll)
     }
@@ -119,15 +121,17 @@ fun handleGetOutCallback(chatId: Long, messageId: Long, userId: Long) {
     if (foodPoll.members.isEmpty()) {
         removeFoodPoll(foodPoll)
 
+        val translationArgs = if (foodPoll.name == null)
+            arrayOf(foodPoll.time.format(timeFormatter))
+        else
+            arrayOf(foodPoll.name, foodPoll.time.format(timeFormatter))
+
         chatBot.editTranslatedMessage(
             chatId = foodPoll.chatId,
             messageId = foodPoll.messageId,
             foodPollType = foodPoll.type,
-            messageKey = FOOD_POLL_CANCELED_KEY,
-            messageArgs = arrayOf(
-                if (foodPoll.name == null) "" else "\"${foodPoll.name}\" ",
-                foodPoll.time.format(timeFormatter)
-            )
+            messageKey = if (foodPoll.name == null) FOOD_POLL_CANCELED_KEY else NAMED_FOOD_POLL_CANCELED_KEY,
+            messageArgs = translationArgs
         )
     } else {
         updateFoodPollMessage(foodPoll)
@@ -135,17 +139,18 @@ fun handleGetOutCallback(chatId: Long, messageId: Long, userId: Long) {
 }
 
 fun updateFoodPollMessage(foodPoll: FoodPoll) {
+    val translationArgs = if (foodPoll.name == null)
+        arrayOf(foodPoll.time.format(timeFormatter), foodPoll.members.joinToString(", ") { it.name })
+    else
+        arrayOf(foodPoll.name, foodPoll.time.format(timeFormatter), foodPoll.members.joinToString(", ") { it.name })
+
     chatBot.editTranslatedMessage(
         chatId = foodPoll.chatId,
         messageId = foodPoll.messageId,
         foodPollType = foodPoll.type,
         messageKey = FOOD_POLL_KEY,
         messageVariant = foodPoll.translationNumber,
-        messageArgs = arrayOf(
-            if (foodPoll.name == null) "" else "\"${foodPoll.name}\" ",
-            foodPoll.time.format(timeFormatter),
-            foodPoll.members.joinToString(", ") { it.name }
-        ),
+        messageArgs = translationArgs,
         includeButtons = true
     )
 }
