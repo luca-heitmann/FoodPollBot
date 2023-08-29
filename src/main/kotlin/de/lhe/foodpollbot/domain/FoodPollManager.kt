@@ -10,7 +10,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.time.LocalDateTime
 
-val FOOD_POLLS_FILE = System.getenv("FOOD_POLLS_FILE") ?: "foodpolls.json"
+val FOOD_POLLS_FILE = System.getenv("FOOD_POLLS_FILE") ?: "foodPolls.json"
 
 @Serializable
 data class FoodPoll(

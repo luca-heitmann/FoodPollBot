@@ -23,7 +23,7 @@ class FoodPollServiceTest {
         verifyParseTime("9.1", 9, 1)
         verifyParseTime("12", 12, 0)
         verifyParseTime("9", 9, 0)
-        verifyUnableToParseTime("asfd")
+        verifyUnableToParseTime("test")
         verifyUnableToParseTime("25:00")
         verifyUnableToParseTime("1200")
     }

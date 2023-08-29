@@ -9,8 +9,8 @@ import com.github.kotlintelegrambot.entities.InlineKeyboardMarkup
 import com.github.kotlintelegrambot.entities.keyboard.InlineKeyboardButton
 import com.github.kotlintelegrambot.logging.LogLevel
 
-const val GET_IN_COMMAND = "getin"
-const val GET_OUT_COMMAND = "getout"
+const val GET_IN_COMMAND = "getIn"
+const val GET_OUT_COMMAND = "getOut"
 
 val chatBot = TelegramChatBotInterface
 
@@ -96,7 +96,7 @@ interface ChatBotInterface {
 }
 
 object TelegramChatBotInterface : ChatBotInterface {
-    val bot = bot {
+    private val bot = bot {
         token = System.getenv("BOT_TOKEN")!!
         logLevel = LogLevel.Error
         dispatch {
