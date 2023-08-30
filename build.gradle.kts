@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.lhe"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -28,5 +28,5 @@ kotlin {
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("de.lhe.foodpollbot.MainKt")
 }
