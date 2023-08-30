@@ -26,6 +26,8 @@ typealias FoodPollTranslations = Map<String?, Any?>
 
 val translations = HashMap<String, FoodPollTranslations>()
 
+fun resetTranslationCache() = translations.clear()
+
 fun getFoodPollTypes(): List<String> {
     return Files.walk(Paths.get(translationsPath))
         .map { it.name }

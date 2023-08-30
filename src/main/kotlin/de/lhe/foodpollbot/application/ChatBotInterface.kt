@@ -11,6 +11,7 @@ import com.github.kotlintelegrambot.logging.LogLevel
 
 const val GET_IN_COMMAND = "getIn"
 const val GET_OUT_COMMAND = "getOut"
+const val RESET_TRANSLATIONS_COMMAND = "resetTranslations"
 
 val chatBot = TelegramChatBotInterface
 
@@ -125,6 +126,9 @@ object TelegramChatBotInterface : ChatBotInterface {
                     messageId = callbackQuery.message!!.messageId,
                     userId = callbackQuery.from.id
                 )
+            }
+            command(RESET_TRANSLATIONS_COMMAND) {
+                resetTranslationCache()
             }
         }
     }

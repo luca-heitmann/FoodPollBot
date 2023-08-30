@@ -1,5 +1,5 @@
 help: |
-  Falsche Benutzung!
+  So geht dat nicht!
   /foodboat <Zeit> [<Name>]
   /foodboat 12:00 Lecker Schnitzel
   /foodboat 13
@@ -8,6 +8,7 @@ getOut: Ausschiffen
 foodPoll:
   - "Gode Wind! Der Pott legt um {} Uhr ab. An Board sind {}"
   - "Alle Mann an Board! Um {} Uhr geht es los mit {}"
+  - "Ahoi Kameraden, es geht um {} Uhr los! Eingeschifft sind {}"
 namedFoodPoll:
   - "Die MS Wirtschaft mit dem Ziel {} legt ab um {} Uhr mit {}"
 foodPollStart:
