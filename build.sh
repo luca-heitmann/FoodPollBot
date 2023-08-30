@@ -3,5 +3,5 @@ set -e
 
 docker_repo="lucaheitmann/foodpollbot:1.0.0"
 
-docker build -t "$docker_repo" .
+docker build --platform linux/arm64 -t "$docker_repo" .
 docker push "$docker_repo"
