@@ -7,5 +7,5 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 RUN apk add unzip
 COPY --from=build /work/build/distributions/FoodPollBot-*.zip ./FoodPollBot.zip
-RUN unzip FoodPollBot.zip && mv FoodPollBot-*/* . && rm -r FoodPollBot-*
+RUN unzip FoodPollBot.zip && mv FoodPollBot-*/* . && rm -r FoodPollBot*
 ENTRYPOINT ["/app/bin/FoodPollBot"]

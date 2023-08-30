@@ -33,6 +33,7 @@ fun getFoodPollTypes(): List<String> {
         .map { it.name }
         .filter { it matches translationFileRegex }
         .map { translationFileRegex.find(it)!!.groups["name"]!!.value }
+        .distinct()
         .toList()
 }
 
