@@ -47,8 +47,8 @@ fun getFoodPolls(): List<FoodPoll> = currentFoodPolls.toList()
 fun findFoodPoll(chatId: Long, messageId: Long) =
     currentFoodPolls.find { it.chatId == chatId && it.messageId == messageId }
 
-fun findFoodPoll(time: LocalDateTime) =
-    currentFoodPolls.find { it.time == time }
+fun findFoodPoll(chatId: Long, time: LocalDateTime) =
+    currentFoodPolls.find { it.chatId == chatId && it.time == time }
 
 fun persistFoodPolls() {
     try {

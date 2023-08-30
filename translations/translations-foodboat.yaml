@@ -18,7 +18,8 @@ foodPollStart:
 namedFoodPollStart:
   - "Backen und Banken, Kameraden! Die Mission {} startet mit {}"
 foodPollCanceled:
-  - "FoodBoat um {} Uhr abgebrochen, weil alle ausgestiegen sind"
+  - "Crew über Board. Das FoodBoat um {} Uhr bleibt im Hafen"
+  - "Das FoodBoat um {} Uhr ist gesunken!"
 namedFoodPollCanceled:
   - "FoodBoat {} um {} Uhr abgebrochen, weil alle ausgestiegen sind"
 timeFormatError: "Zeit nicht erkannt: {}"

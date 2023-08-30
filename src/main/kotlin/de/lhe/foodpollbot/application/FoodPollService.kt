@@ -26,7 +26,7 @@ fun handleFoodPollCommand(chatId: Long, userId: Long, userName: String, foodPoll
         chatBot.sendTranslatedMessage(chatId, foodPollType, TIME_FORMAT_ERROR_KEY, args[0])
     } else if (LocalDateTime.now().isAfter(time)) {
         chatBot.sendTranslatedMessage(chatId, foodPollType, TIME_IN_PAST_ERROR_KEY)
-    } else if (findFoodPoll(time) != null) {
+    } else if (findFoodPoll(chatId, time) != null) {
         chatBot.sendTranslatedMessage(chatId, foodPollType, TIME_EXISTS_ERROR_KEY)
     } else {
         val translationNumber = Random.nextInt(0, getNumOfPossibleTranslations(foodPollType, FOOD_POLL_KEY))
