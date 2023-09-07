@@ -140,6 +140,7 @@ fun handleGetOutCallback(chatId: Long, messageId: Long, userId: Long) {
 }
 
 fun updateFoodPollMessage(foodPoll: FoodPoll) {
+    val translationsKey = if (foodPoll.name == null) FOOD_POLL_KEY else NAMED_FOOD_POLL_KEY
     val translationArgs = if (foodPoll.name == null)
         arrayOf(foodPoll.time.format(timeFormatter), foodPoll.members.joinToString(", ") { it.name })
     else
@@ -149,7 +150,7 @@ fun updateFoodPollMessage(foodPoll: FoodPoll) {
         chatId = foodPoll.chatId,
         messageId = foodPoll.messageId,
         foodPollType = foodPoll.type,
-        messageKey = FOOD_POLL_KEY,
+        messageKey = translationsKey,
         messageVariant = foodPoll.translationNumber,
         messageArgs = translationArgs,
         includeButtons = true
