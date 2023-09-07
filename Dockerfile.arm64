@@ -1,4 +1,6 @@
+ARG baseImage
+FROM ${baseImage} as base
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY --from="ghcr.io/luca-heitmann/foodpollbot:1.0.0-amd64" /app .
+COPY --from=base /app .
 ENTRYPOINT ["/app/bin/FoodPollBot"]

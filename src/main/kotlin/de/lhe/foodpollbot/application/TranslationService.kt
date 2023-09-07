@@ -40,7 +40,7 @@ fun getFoodPollTypes(): List<String> {
 fun getTranslatedMessage(foodPollType: String, messageKey: String, messageVariant: Int? = null, vararg messageArgs: String): String {
     val possibleTranslations = getTranslationForType(foodPollType)[messageKey]
     var translation = if (possibleTranslations is List<*>) {
-        val variant = messageVariant ?: Random.nextInt(0, possibleTranslations.size)
+        val variant = messageVariant ?: Random.nextInt(0, possibleTranslations.size - 1)
         possibleTranslations[variant].toString()
     } else {
         possibleTranslations.toString()

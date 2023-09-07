@@ -29,7 +29,7 @@ fun handleFoodPollCommand(chatId: Long, userId: Long, userName: String, foodPoll
     } else if (findFoodPoll(chatId, time) != null) {
         chatBot.sendTranslatedMessage(chatId, foodPollType, TIME_EXISTS_ERROR_KEY)
     } else {
-        val translationNumber = Random.nextInt(0, getNumOfPossibleTranslations(foodPollType, FOOD_POLL_KEY))
+        val translationNumber = Random.nextInt(0, getNumOfPossibleTranslations(foodPollType, FOOD_POLL_KEY) - 1)
         val translationArgs = if (name == null)
             arrayOf(time.format(timeFormatter), userName)
         else
