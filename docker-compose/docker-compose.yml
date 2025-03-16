@@ -1,0 +1,12 @@
+services:
+  foodpollbot:
+    image: "lucaheitmann/foodpollbot:1.0.3-arm64"
+    restart: "always"
+    environment:
+      BOT_TOKEN: "CHANGE_ME" # Create a bot using @BotFather via Telegram
+      TZ: "Europe/Berlin"
+      TRANSLATIONS_PATH: "/workspace/translations"
+      FOOD_POLLS_FILE: "/workspace/foodpolls/foodPolls.json"
+    volumes:
+      - "./foodpollbot-workspace:/workspace"
+

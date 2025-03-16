@@ -1,0 +1,27 @@
+help: |
+  So geht dat nicht!
+  /foodboat <Zeit> [<Name>]
+  /foodboat 12:00 Lecker Schnitzel
+  /foodboat 13
+getIn: Einschiffen
+getOut: Ausschiffen
+foodPoll:
+  - "Gode Wind! Der Pott legt um {} Uhr ab. An Board sind {}"
+  - "Alle Mann an Board! Um {} Uhr geht es los mit {}"
+  - "Ahoi Kameraden, es geht um {} Uhr los! Eingeschifft sind {}"
+namedFoodPoll:
+  - "Die MS Wirtschaft mit dem Ziel {} legt ab um {} Uhr mit {}"
+foodPollStart:
+  - "Backen und Banken, Kameraden! Es geht los mit {}"
+  - "Klarmachen zum Auslaufen! An Board sind {}"
+  - "Leinen los und in See stechen! {}"
+namedFoodPollStart:
+  - "Backen und Banken, Kameraden! Die Mission {} startet mit {}"
+foodPollCanceled:
+  - "Crew über Board. Das FoodBoat um {} Uhr bleibt im Hafen"
+  - "Das FoodBoat um {} Uhr ist gesunken!"
+namedFoodPollCanceled:
+  - "FoodBoat {} um {} Uhr abgebrochen, weil alle ausgestiegen sind"
+timeFormatError: "Zeit nicht erkannt: {}"
+timeInPastError: "Ein FoodBoat kann nicht in der Vergangenheit erstellt werden"
+timeExistsError: "Es existiert bereits ein FoodBoat für diese Zeit"
